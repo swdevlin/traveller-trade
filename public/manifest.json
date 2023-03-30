@@ -1,0 +1,15 @@
+{
+  "short_name": "Trader",
+  "name": "Traveller Trade Analyzer",
+  "icons": [
+    {
+      "src": "trade.png",
+      "type": "image/png",
+      "sizes": "29x34"
+    },
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
