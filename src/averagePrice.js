@@ -52,10 +52,10 @@ export const averagePurchasePrice = (price, dm, broker, brokerRule, brokerMultip
     }
   } else
     for (let r=3; r<=18; r++)
-      if (brokerRule === 'raw')
-        ap += price*purchasePriceModifier(r+dm+broker-DEFAULT_SUPPLIER_BROKER)*THREE_DICE_ODDS[r];
-      else
+      if (brokerRule === 'percent')
         ap += price*purchasePriceModifier(r+dm)*THREE_DICE_ODDS[r]*(1-(broker*brokerMultiplier)/100);
+      else
+        ap += price*purchasePriceModifier(r+dm+broker-DEFAULT_SUPPLIER_BROKER)*THREE_DICE_ODDS[r];
   return Math.round(ap);
 };
 

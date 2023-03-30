@@ -1,6 +1,5 @@
 import './App.css';
 import {Col, Container, Form, FormGroup, Input, Label, Row, Table} from "reactstrap";
-import TradeCodes from "./tradeCodes";
 import {useEffect, useState} from "react";
 import {getAvailableGoods, maxTons, purchaseDM, saleDM} from "./goods";
 import {averagePurchasePrice, averageSalePrice} from "./averagePrice";
