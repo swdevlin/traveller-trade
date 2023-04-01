@@ -282,13 +282,18 @@ export const saleDM = (good, tradeCodes) => {
 	return dm+negativeDm;
 }
 
-export const maxTons = (good, lotSize) => {
+export const maxTons = (good, lotSize, pop) => {
+	let popDM = 0;
+	if (pop <= 3)
+		popDM = -3;
+	else if (pop >= 9)
+		popDM = 3;
 	if (lotSize === '1')
 		return 1;
 	else if (lotSize === 'min')
 		return good.tons.dice * good.tons.multiplier;
 	else if (lotSize === 'avg')
-		return 3.5 * good.tons.dice * good.tons.multiplier;
+		return Math.max(3.5 * good.tons.dice + popDM, 0) * good.tons.multiplier;
 	else if (lotSize === 'max')
-		return 6 * good.tons.dice * good.tons.multiplier;
+		return (6 * good.tons.dice + popDM) * good.tons.multiplier;
 }

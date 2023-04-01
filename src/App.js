@@ -5,6 +5,7 @@ import {getAvailableGoods, maxTons, purchaseDM, saleDM} from "./goods";
 import {averagePurchasePrice, averageSalePrice} from "./averagePrice";
 import TradeCodeSelector from "./components/tradeCodeSelector";
 import {BrokerModifierNotes, BrokerRuleNotes, LotSizeNotes} from "./notes";
+import {StartportCodes} from "./starports";
 
 function App() {
   const [sourceTCs, setSourceTCs] = useState([]);
@@ -24,6 +25,14 @@ function App() {
     localStorage.getItem('cargo') ? parseInt(localStorage.getItem('cargo')) : 0
   );
   const [lotSize, setLotSize] = useState('avg');
+
+  const [brokerCheck, setBrokerCheck] = useState(() =>
+    localStorage.getItem('brokerCheck') ? localStorage.getItem('brokerCheck') : false
+  );
+
+  const [sourceStarport, setSourceStarport] = useState('A');
+  const [destinationStarport, setDestinationStarport] = useState('A');
+  const [sourcePop, setSourcePop] = useState(5);
 
   const toggleSourceTC = function(code) {
     let newTCs;
@@ -55,6 +64,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('broker', broker);
   }, [broker]);
+
+  useEffect(() => {
+    localStorage.setItem('brokerCheck', brokerCheck);
+  }, [brokerCheck]);
 
   useEffect(() => {
     localStorage.setItem('brokerRule', brokerRule);
@@ -143,27 +156,63 @@ function App() {
                   />
                 </Col>
               </Row>
-              <Row>
-                <Col>
-                  <FormGroup switch className="text-left">
-                    <Input
-                      type="switch"
-                      role="switch"
-                      checked={brokerHired}
-                      onClick={() => setBrokerHired(!brokerHired)}
-                    />
-                    <Label check>Hired broker</Label>
-                  </FormGroup>
-                </Col>
-              </Row>
             </FormGroup>
+            <Row>
+              <Col><h4>Source</h4></Col>
+            </Row>
+            <Row>
+              <Col>
+                <Label for="sourceStarport">
+                  Starport
+                </Label>
+                <Input
+                  id="sourceStarport"
+                  name="sourceStarport"
+                  type="select"
+                  size={'sm'}
+                  value={sourceStarport}
+                  onChange={(e)=> {setSourceStarport(e.target.value)}}
+                >
+                  {StartportCodes.map((c) => {
+                    return (<option value={c}>{c}</option>);
+                  })}
+                </Input>
+                <FormGroup switch className="text-left">
+                  <Input
+                    type="switch"
+                    role="switch"
+                    checked={brokerHired}
+                    onClick={() => setBrokerHired(!brokerHired)}
+                  />
+                  <Label check>Hired broker</Label>
+                </FormGroup>
+              </Col>
+              <Col>
+                <Label for="sourcePop">
+                  Population
+                </Label>
+                <Input
+                  id="sourcePop"
+                  size={'sm'}
+                  name="sourcePop"
+                  value={sourcePop}
+                  type="number"
+                  onChange={(e) => {setSourcePop(parseInt(e.target.value))}}
+                />
+              </Col>
+            </Row>
             <FormGroup>
               <Label for="sourceTCs">
-                Source Trade Codes
+                Trade Codes
               </Label>
               <TradeCodeSelector selected={sourceTCs} toggleCode={toggleSourceTC}/>
+            </FormGroup>
+            <Row>
+              <Col><h4>Destination</h4></Col>
+            </Row>
+            <FormGroup>
               <Label for="destinationTCs">
-                Destination Trade Codes
+                Trade Codes
               </Label>
               <TradeCodeSelector selected={destinationTCs} toggleCode={toggleDestinationTC}/>
             </FormGroup>
@@ -202,8 +251,11 @@ function App() {
               {availableGoods.map(g => {
                 const pDM = purchaseDM(g, sourceTCs);
                 const sDM = saleDM(g, destinationTCs);
-                const tons = Math.min(maxTons(g, lotSize), cargo);
-                const avgPurchase = averagePurchasePrice(g.price, pDM, broker, brokerRule, brokerMultiplier);
+                const tons = Math.min(maxTons(g, lotSize, sourcePop), cargo);
+                const effectiveBroker = brokerHired ? 4 : broker;
+                let avgPurchase = averagePurchasePrice(g.price, pDM, effectiveBroker, brokerRule, brokerMultiplier);
+                if (brokerHired)
+                  avgPurchase = Math.round(avgPurchase /= 0.9);
                 const avgSale = averageSalePrice(g.price, sDM, broker, brokerRule, brokerMultiplier);
                 const savings = Math.round((g.price - avgPurchase)*tons);
                 const profit = Math.round((avgSale - avgPurchase)*tons);
@@ -225,6 +277,9 @@ function App() {
           </Col>
         </Row>
         <h3>Notes</h3>
+        <Row className={'note'}>
+          <Col>Current only Mongoose Traveller 2022 rules are implemented</Col>
+        </Row>
         <Row className={'note'}>
           <Col><sup>1</sup>{LotSizeNotes[lotSize]}</Col>
         </Row>
