@@ -18,3 +18,9 @@ export const BrokerRuleNotes = {
 export const BrokerModifierNotes = {
   percent: 'Multiplier on the broker percent. E.g. a multiplier of 2 and a Broker skill of 3 results in a 6% change in the price',
 };
+
+export const BasePriceRuleNotes = {
+  raw: 'Base price as written in the rules',
+  '75%': 'Prices for goods over Cr50,000 are reduced by 25%',
+};
+

@@ -73,3 +73,11 @@ div.form-switch {
   border-right: solid aliceblue ;
   padding-right: 4px;
 }
+
+.expenses {
+  margin-top: 8px;
+}
+
+.note sup {
+  padding-right: 2px;
+}

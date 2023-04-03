@@ -4,8 +4,9 @@ import {useEffect, useState} from "react";
 import {getAvailableGoods, maxTons, purchaseDM, saleDM} from "./goods";
 import {averagePurchasePrice, averageSalePrice} from "./averagePrice";
 import TradeCodeSelector from "./components/tradeCodeSelector";
-import {BrokerModifierNotes, BrokerRuleNotes, LotSizeNotes} from "./notes";
+import {BasePriceRuleNotes, BrokerModifierNotes, BrokerRuleNotes, LotSizeNotes} from "./notes";
 import {StartportCodes} from "./starports";
+import TechLevel from "./components/techLevel";
 
 function App() {
   const [sourceTCs, setSourceTCs] = useState([]);
@@ -33,6 +34,68 @@ function App() {
   const [sourceStarport, setSourceStarport] = useState('A');
   const [destinationStarport, setDestinationStarport] = useState('A');
   const [sourcePop, setSourcePop] = useState(5);
+
+  const [mortgage, setMortgage] = useState(() =>
+    localStorage.getItem('mortgage') ? parseInt(localStorage.getItem('mortgage')) : 0
+  );
+  useEffect(() => {
+    localStorage.setItem('mortgage', mortgage);
+  }, [mortgage]);
+
+  const [fuelCost, setFuelCost] = useState(() =>
+    localStorage.getItem('fuelCost') ? parseInt(localStorage.getItem('fuelCost')) : 0
+  );
+  useEffect(() => {
+    localStorage.setItem('fuelCost', fuelCost);
+  }, [fuelCost]);
+
+  const [sourceTL, setSourceTL] = useState(() =>
+    localStorage.getItem('sourceTL') ? parseInt(localStorage.getItem('sourceTL')) : 12
+  );
+  useEffect(() => {
+    localStorage.setItem('sourceTL', sourceTL);
+  }, [sourceTL]);
+
+  const [destinationTL, setDestinationTL] = useState(() =>
+    localStorage.getItem('destinationTL') ? parseInt(localStorage.getItem('destinationTL')) : 12
+  );
+  useEffect(() => {
+    localStorage.setItem('destinationTL', destinationTL);
+  }, [destinationTL]);
+
+  const [maintenance, setMaintenance] = useState(() =>
+    localStorage.getItem('maintenance') ? parseInt(localStorage.getItem('maintenance')) : 0
+  );
+  useEffect(() => {
+    localStorage.setItem('maintenance', maintenance);
+  }, [maintenance]);
+
+  const [techAffectsSale, setTechAffectsSale] = useState(() =>
+    localStorage.getItem('techAffectsSale') ? parseInt(localStorage.getItem('techAffectsSale')) === 'yes' : false
+  );
+  useEffect(() => {
+    localStorage.setItem('techAffectsSale', techAffectsSale ? 'yes' : 'no');
+  }, [techAffectsSale]);
+
+  const [tlMultiplier, setTLMultiplier] = useState(() =>
+    localStorage.getItem('tlMultiplier') ? parseInt(localStorage.getItem('tlMultiplier')) : 1
+  );
+  useEffect(() => {
+    localStorage.setItem('tlMultiplier', tlMultiplier);
+  }, [tlMultiplier]);
+
+  const [basePriceRule, setBasePriceRule] = useState(() =>
+    localStorage.getItem('basePriceRule') ? localStorage.getItem('basePriceRule') : 'raw'
+  );
+  useEffect(() => {
+    localStorage.setItem('basePriceRule', basePriceRule);
+  }, [basePriceRule]);
+
+  const expensesPerTon = () => {
+    if (cargo === 0)
+      return 0;
+    return Math.round(((mortgage + maintenance)/2 + fuelCost)/cargo);
+  }
 
   const toggleSourceTC = function(code) {
     let newTCs;
@@ -105,6 +168,54 @@ function App() {
                 onChange={(e) => {setCargo(parseInt(e.target.value))}}
               />
             </FormGroup>
+            <Row>
+              <Col>
+                <Label for="mortgage">
+                  Mortgage<sup>4</sup>
+                </Label>
+                <Input
+                  id="mortgage"
+                  size={'sm'}
+                  name="mortgage"
+                  value={mortgage}
+                  type="number"
+                  onChange={(e) => {setMortgage(parseInt(e.target.value))}}
+                />
+              </Col>
+              <Col>
+                <Label for="maintenance">
+                  Maintenance<sup>4</sup>
+                </Label>
+                <Input
+                  id="maintenance"
+                  size={'sm'}
+                  name="maintenance"
+                  value={maintenance}
+                  type="number"
+                  onChange={(e) => {setMaintenance(parseInt(e.target.value))}}
+                />
+              </Col>
+              <Col>
+                <Label for="fuelCost">
+                  Fuel Cost<sup>5</sup>
+                </Label>
+                <Input
+                  id="fuelCost"
+                  size={'sm'}
+                  name="fuelCost"
+                  value={fuelCost}
+                  type="number"
+                  onChange={(e) => {setFuelCost(parseInt(e.target.value))}}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col className="text-left">
+                <div className="expenses">
+                  Expenses per ton<sup>7</sup>: {expensesPerTon()}
+                </div> </Col>
+            </Row>
+            <hr/>
             <FormGroup>
               <Row>
                 <Col>
@@ -200,6 +311,12 @@ function App() {
                   onChange={(e) => {setSourcePop(parseInt(e.target.value))}}
                 />
               </Col>
+              <Col>
+                <Label for="sourceTL">
+                  Tech Level
+                </Label>
+                <TechLevel tl={sourceTL} setTL={setSourceTL}/>
+              </Col>
             </Row>
             <FormGroup>
               <Label for="sourceTCs">
@@ -209,6 +326,60 @@ function App() {
             </FormGroup>
             <Row>
               <Col><h4>Destination</h4></Col>
+            </Row>
+            <Row>
+              <Col>
+                <Label for="destinationStarport">
+                  Starport
+                </Label>
+                <Input
+                  id="destinationStarport"
+                  name="destinationStarport"
+                  type="select"
+                  size={'sm'}
+                  value={destinationStarport}
+                  onChange={(e)=> {setDestinationStarport(e.target.value)}}
+                >
+                  {StartportCodes.map((c) => {
+                    return (<option value={c}>{c}</option>);
+                  })}
+                </Input>
+              </Col>
+              <Col>
+                <Label for="destinationTL">
+                  Tech Level
+                </Label>
+                <TechLevel tl={destinationTL} setTL={setDestinationTL}/>
+                <FormGroup switch className="text-left">
+                  <Input
+                    type="switch"
+                    role="switch"
+                    checked={techAffectsSale}
+                    onClick={() => setTechAffectsSale(!techAffectsSale)}
+                  />
+                  <Label check>Tech affects sale</Label>
+                </FormGroup>
+                {techAffectsSale && <Col>
+                  <Row>
+                    <Col>
+                      <Label for="tlMultiplier">
+                        % mult<sup>6</sup>
+                      </Label>
+                    </Col>
+                    <Col>
+                      <Input
+                        id="tlMultiplier"
+                        size={'sm'}
+                        name="tlMultiplier"
+                        value={tlMultiplier}
+                        type="number"
+                        min={1}
+                        onChange={(e) => {setTLMultiplier(parseInt(e.target.value))}}
+                      />
+                    </Col>
+                  </Row>
+                </Col>}
+              </Col>
             </Row>
             <FormGroup>
               <Label for="destinationTCs">
@@ -223,7 +394,20 @@ function App() {
               <thead>
                 <tr>
                   <th>Good</th>
-                  <th className="br">Base Price</th>
+                  <th className="br">
+                    Base Price<sup>8</sup>
+                    <Input
+                      id="basePrice"
+                      name="basePrice"
+                      type="select"
+                      size={'sm'}
+                      value={basePriceRule}
+                      onChange={(e)=> {setBasePriceRule(e.target.value)}}
+                    >
+                      <option value="raw">RAW</option>
+                      <option value="75%">75 %</option>
+                    </Input>
+                  </th>
                   <th>Purchase DM</th>
                   <th>Expected Cost</th>
                   <th>
@@ -251,18 +435,24 @@ function App() {
               {availableGoods.map(g => {
                 const pDM = purchaseDM(g, sourceTCs);
                 const sDM = saleDM(g, destinationTCs);
+                const exp = expensesPerTon();
                 const tons = Math.min(maxTons(g, lotSize, sourcePop), cargo);
                 const effectiveBroker = brokerHired ? 4 : broker;
-                let avgPurchase = averagePurchasePrice(g.price, pDM, effectiveBroker, brokerRule, brokerMultiplier);
+                let basePrice = g.price;
+                if (basePriceRule === '75%')
+                  basePrice = Math.round(basePrice * .75);
+                let avgPurchase = averagePurchasePrice(basePrice, pDM, effectiveBroker, brokerRule, brokerMultiplier, basePriceRule);
                 if (brokerHired)
                   avgPurchase = Math.round(avgPurchase /= 0.9);
-                const avgSale = averageSalePrice(g.price, sDM, broker, brokerRule, brokerMultiplier);
-                const savings = Math.round((g.price - avgPurchase)*tons);
-                const profit = Math.round((avgSale - avgPurchase)*tons);
+                let avgSale = averageSalePrice(basePrice, sDM, broker, brokerRule, brokerMultiplier);
+                if (techAffectsSale)
+                  avgSale = Math.round(avgSale * (1+tlMultiplier*(sourceTL - destinationTL)/100))
+                const savings = Math.round((basePrice - avgPurchase)*tons);
+                const profit = Math.round((avgSale - avgPurchase - exp)*tons);
                 return (
                   <tr>
                     <td>{g.name}</td>
-                    <td className="number br">{g.price.toLocaleString()}</td>
+                    <td className="number br">{basePrice.toLocaleString()}</td>
                     <td>{pDM}</td>
                     <td className="number">{avgPurchase.toLocaleString()}</td>
                     <td>{tons}</td>
@@ -274,23 +464,40 @@ function App() {
                 );
               })}
             </Table>
+            <h3>Notes</h3>
+            <Row className={'note'}>
+              <Col>Mongoose Traveller 2022 ruleset</Col>
+            </Row>
+            <Row className={'note'}>
+              <Col><sup>1</sup>{LotSizeNotes[lotSize]}</Col>
+            </Row>
+            <Row className={'note'}>
+              <Col><sup>2</sup>{BrokerRuleNotes[brokerRule]}</Col>
+            </Row>
+            {brokerRule === 'percent' &&
+              <Row className={'note'}>
+                <Col><sup>3</sup>{BrokerModifierNotes[brokerRule]}</Col>
+              </Row>
+            }
+            <Row className='note'>
+              <Col><sup>4</sup>Per month</Col>
+            </Row>
+            <Row className='note'>
+              <Col><sup>5</sup>Per jump</Col>
+            </Row>
+            {techAffectsSale &&
+              <Row className='note'>
+                <Col><sup>6</sup>Multiplier on the tech level percent. E.g. a multiplier of 2 and a tech difference of 4 results in an 8% change in the sale price</Col>
+              </Row>
+            }
+            <Row className='note'>
+              <Col><sup>7</sup>Expenses per ton assume 2 jumps per month. The model does not account for freight, passengers, or mail</Col>
+            </Row>
+            <Row className='note'>
+              <Col><sup>8</sup>{BasePriceRuleNotes[basePriceRule]}</Col>
+            </Row>
           </Col>
         </Row>
-        <h3>Notes</h3>
-        <Row className={'note'}>
-          <Col>Current only Mongoose Traveller 2022 rules are implemented</Col>
-        </Row>
-        <Row className={'note'}>
-          <Col><sup>1</sup>{LotSizeNotes[lotSize]}</Col>
-        </Row>
-        <Row className={'note'}>
-          <Col><sup>2</sup>{BrokerRuleNotes[brokerRule]}</Col>
-        </Row>
-        {brokerRule === 'percent' &&
-        <Row className={'note'}>
-          <Col><sup>3</sup>{BrokerModifierNotes[brokerRule]}</Col>
-        </Row>
-        }
       </Container>
     </div>
   );
