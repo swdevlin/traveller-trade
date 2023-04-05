@@ -1,7 +1,7 @@
 import './App.css';
-import {Col, Container, Form, FormGroup, Input, Label, Row, Table} from "reactstrap";
+import {Col, Container, FormGroup, Input, Label, Row, Table} from "reactstrap";
 import {useEffect, useState} from "react";
-import {getAvailableGoods, maxTons, purchaseDM, saleDM} from "./goods";
+import {getAvailableGoods, Goods, maxTons, purchaseDM, saleDM} from "./goods";
 import {averagePurchasePrice, averageSalePrice} from "./averagePrice";
 import TradeCodeSelector from "./components/tradeCodeSelector";
 import {BasePriceRuleNotes, BrokerModifierNotes, BrokerRuleNotes, LotSizeNotes} from "./notes";
@@ -26,10 +26,6 @@ function App() {
     localStorage.getItem('cargo') ? parseInt(localStorage.getItem('cargo')) : 0
   );
   const [lotSize, setLotSize] = useState('avg');
-
-  const [brokerCheck, setBrokerCheck] = useState(() =>
-    localStorage.getItem('brokerCheck') ? localStorage.getItem('brokerCheck') : false
-  );
 
   const [sourceStarport, setSourceStarport] = useState('A');
   const [destinationStarport, setDestinationStarport] = useState('A');
@@ -127,10 +123,6 @@ function App() {
   useEffect(() => {
     localStorage.setItem('broker', broker);
   }, [broker]);
-
-  useEffect(() => {
-    localStorage.setItem('brokerCheck', brokerCheck);
-  }, [brokerCheck]);
 
   useEffect(() => {
     localStorage.setItem('brokerRule', brokerRule);
@@ -429,7 +421,7 @@ function App() {
                   <th className="br">Savings</th>
                   <th>Sale DM</th>
                   <th className="br">Sale Price</th>
-                  <th>Profit</th>
+                  <th colSpan={2}>Profit<sup>9</sup></th>
                 </tr>
               </thead>
               {availableGoods.map(g => {
@@ -445,10 +437,11 @@ function App() {
                 if (brokerHired)
                   avgPurchase = Math.round(avgPurchase /= 0.9);
                 let avgSale = averageSalePrice(basePrice, sDM, broker, brokerRule, brokerMultiplier);
-                if (techAffectsSale)
+                if (techAffectsSale && g.techSensitive)
                   avgSale = Math.round(avgSale * (1+tlMultiplier*(sourceTL - destinationTL)/100))
                 const savings = Math.round((basePrice - avgPurchase)*tons);
-                const profit = Math.round((avgSale - avgPurchase - exp)*tons);
+                const profit = Math.round((avgSale - avgPurchase)*tons);
+                const expProfit = Math.round((avgSale - avgPurchase - exp)*tons);
                 return (
                   <tr>
                     <td>{g.name}</td>
@@ -459,7 +452,12 @@ function App() {
                     <td className={`number br ${savings<0 ? 'loss': ''}`}>{savings.toLocaleString()}</td>
                     <td>{sDM}</td>
                     <td className="number br">{avgSale.toLocaleString()}</td>
-                    <td className={`number ${profit<0 ? 'loss': ''}`}>{profit.toLocaleString()}</td>
+                    <td className={`number ${profit<0 ? 'loss': ''}`}>
+                      {profit.toLocaleString()}
+                    </td>
+                    <td className={`number ${expProfit < 0 ? 'loss' : ''}`}>
+                      {expProfit.toLocaleString()}
+                    </td>
                   </tr>
                 );
               })}
@@ -487,7 +485,11 @@ function App() {
             </Row>
             {techAffectsSale &&
               <Row className='note'>
-                <Col><sup>6</sup>Multiplier on the tech level percent. E.g. a multiplier of 2 and a tech difference of 4 results in an 8% change in the sale price</Col>
+                <Col>
+                  <sup>6</sup>
+                  Multiplier on the tech level percent. E.g. a multiplier of 2 and a tech difference of 4 results in an 8% change in the sale price
+                  Goods affected by tech are: {Goods.filter(g => g.techSensitive).map(g => g.name).join(', ')}
+                </Col>
               </Row>
             }
             <Row className='note'>
@@ -495,6 +497,9 @@ function App() {
             </Row>
             <Row className='note'>
               <Col><sup>8</sup>{BasePriceRuleNotes[basePriceRule]}</Col>
+            </Row>
+            <Row className='note'>
+              <Col><sup>9</sup>The first column is sale - purchase. The second column factors in expense per ton</Col>
             </Row>
           </Col>
         </Row>

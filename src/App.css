@@ -65,9 +65,6 @@ div.form-switch {
   padding-left: 4px;
 }
 
-.loss {
-  background-color: lightpink;
-}
 
 .br {
   border-right: solid aliceblue ;
@@ -80,4 +77,8 @@ div.form-switch {
 
 .note sup {
   padding-right: 2px;
+}
+
+.loss {
+  color: darkred;
 }

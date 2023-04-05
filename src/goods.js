@@ -6,6 +6,7 @@ export const Goods = [
 		pdm: {In: 2, Ht: 3, Ri: 1},
 		sdm: {Ni: 2, Lt: 1, Po: 1},
 		availability: [],
+		techSensitive: true,
 	},
   {
 		name: 'Common Industrial Goods',
@@ -14,6 +15,7 @@ export const Goods = [
 		pdm: {Na: 2, In: 5},
 		sdm: {Ni: 3, Ag: 2},
 		availability: [],
+		techSensitive: true,
 	},
   {
 		name: 'Common Manufactured Goods',
@@ -22,6 +24,7 @@ export const Goods = [
 		pdm: {Na: 2, In: 5},
 		sdm: {Ni: 3, Hi: 2},
 		availability: [],
+		techSensitive: true,
 	},
   {
 		name: 'Common Raw Materials',
@@ -30,6 +33,7 @@ export const Goods = [
 		pdm: {Ag: 3, Ga: 2},
 		sdm: {In: 2, Po: 2},
 		availability: [],
+		techSensitive: false,
 	},
   {
 		name: 'Common Consumables',
@@ -38,6 +42,7 @@ export const Goods = [
 		pdm: {Ag: 3, Wa: 2, Ga: 1, As: -4},
 		sdm: {As: 1, Fl: 1, Ic: 1, Hi: 1},
 		availability: [],
+		techSensitive: false,
 	},
   {
 		name: 'Common Ore',
@@ -46,6 +51,7 @@ export const Goods = [
 		pdm: {As: 4},
 		sdm: {In: 3, Ni: 1},
 		availability: [],
+		techSensitive: false,
 	},
   {
 		name: 'Advanced Electronics',
@@ -54,6 +60,7 @@ export const Goods = [
 		pdm: {In: 2, Ht: 3},
 		sdm: {Ni: 1, Ri: 2, As: 3},
 		availability: ['In', 'Ht'],
+		techSensitive: true,
 	},
   {
 		name: 'Advanced Machine Parts',
@@ -62,6 +69,7 @@ export const Goods = [
 		pdm: {In: 2, Ht: 1},
 		sdm: {As: 2, Ni: 1},
 		availability: ['In', 'Ht'],
+		techSensitive: true,
 	},
   {
 		name: 'Advanced Manufactured Goods',
@@ -70,6 +78,7 @@ export const Goods = [
 		pdm: {In: 1},
 		sdm: {Hi: 1, Ri: 2},
 		availability: ['In', 'Ht'],
+		techSensitive: true,
 	},
   {
 		name: 'Advanced Weapons',
@@ -78,6 +87,7 @@ export const Goods = [
 		pdm: {Ht: 2},
 		sdm: {Po: 1, Az: 2, Rz: 4},
 		availability: ['In', 'Ht'],
+		techSensitive: true,
 	},
   {
 		name: 'Advanced Vehicles',
@@ -86,6 +96,7 @@ export const Goods = [
 		pdm: {Ht: 2},
 		sdm: {As: 2, Ri: 2},
 		availability: ['In', 'Ht'],
+		techSensitive: true,
 	},
   {
 		name: 'Biochemicals',
@@ -94,6 +105,7 @@ export const Goods = [
 		pdm: {Ag: 1, Wa: 1},
 		sdm: {In: 2},
 		availability: ['Ag', 'Wa'],
+		techSensitive: true,
 	},
   {
 		name: 'Crystals & Gems',
@@ -102,6 +114,7 @@ export const Goods = [
 		pdm: {As: 2, De: 1, Ic: 1},
 		sdm: {In: 3, Ri: 2},
 		availability: ['As', 'De', 'Ic'],
+		techSensitive: false,
 	},
   {
 		name: 'Cybernetics',
@@ -110,6 +123,7 @@ export const Goods = [
 		pdm: {Ht: 1},
 		sdm: {As: 1, Ic: 1, Ri: 2},
 		availability: ['Ht'],
+		techSensitive: true,
 	},
   {
 		name: 'Live Animals',
@@ -118,6 +132,7 @@ export const Goods = [
 		pdm: {Ag: 2},
 		sdm: {Lo: 3},
 		availability: ['Ag', 'Ga'],
+		techSensitive: false,
 	},
   {
 		name: 'Luxury Consumables',
@@ -126,6 +141,7 @@ export const Goods = [
 		pdm: {Ag: 2, Wa: 1},
 		sdm: {Ri: 2, Hi: 2},
 		availability: ['Ag', 'Ga', 'Wa'],
+		techSensitive: false,
 	},
   {
 		name: 'Luxury Goods',
@@ -134,6 +150,7 @@ export const Goods = [
 		pdm: {Hi: 1},
 		sdm: {Ri: 4},
 		availability: ['Hi'],
+		techSensitive: true,
 	},
   {
 		name: 'Medical Supplies',
@@ -142,6 +159,7 @@ export const Goods = [
 		pdm: {Ht: 2},
 		sdm: {In: 2, Po: 1, Ri: 1},
 		availability: ['Hi', 'Ht'],
+		techSensitive: true,
 	},
   {
 		name: 'Petrochemicals',
@@ -150,6 +168,7 @@ export const Goods = [
 		pdm: {De: 2},
 		sdm: {In: 2, Ag: 1, Lt: 2},
 		availability: ['De', 'Fl', 'Ic', 'Wa'],
+		techSensitive: false,
 	},
   {
 		name: 'Pharmaceuticals',
@@ -158,6 +177,7 @@ export const Goods = [
 		pdm: {As: 2, Hi: 1},
 		sdm: {Ri: 2, Lt: 1},
 		availability: ['As', 'De', 'Hi', 'Wa'],
+		techSensitive: true,
 	},
   {
 		name: 'Polymers',
@@ -166,6 +186,7 @@ export const Goods = [
 		pdm: {In: 1},
 		sdm: {Ri: 2, Ni: 1},
 		availability: ['In'],
+		techSensitive: true,
 	},
   {
 		name: 'Precious Metals',
@@ -174,6 +195,7 @@ export const Goods = [
 		pdm: {As: 3, De: 1, Ic: 2},
 		sdm: {Ri: 2, In: 2, Ht: 1},
 		availability: ['As', 'De', 'Ic', 'Fl'],
+		techSensitive: false,
 	},
   {
 		name: 'Radioactives',
@@ -182,6 +204,7 @@ export const Goods = [
 		pdm: {As: 2, Lo: 2},
 		sdm: {In:3, Ht: 1, Ni: -2, Ag: -3},
 		availability: ['As', 'De', 'Lo'],
+		techSensitive: false,
 	},
   {
 		name: 'Robots',
@@ -190,6 +213,7 @@ export const Goods = [
 		pdm: {In: 1},
 		sdm: {Ag: 2, Ht: 1},
 		availability: ['In'],
+		techSensitive: true,
 	},
   {
 		name: 'Spices',
@@ -198,6 +222,7 @@ export const Goods = [
 		pdm: {De: 2},
 		sdm: {Hi: 2, Ri: 3, Po: 3},
 		availability: ['Ga', 'De', 'Wa'],
+		techSensitive: false,
 	},
   {
 		name: 'Textiles',
@@ -206,6 +231,7 @@ export const Goods = [
 		pdm: {Ag: 7},
 		sdm: {Hi: 3, Na: 2},
 		availability: ['Ag', 'Ni'],
+		techSensitive: false,
 	},
   {
 		name: 'Uncommon Ore',
@@ -214,6 +240,7 @@ export const Goods = [
 		pdm: {As: 4},
 		sdm: {In: 3, Ni: 1},
 		availability: ['As', 'Ic'],
+		techSensitive: false,
 	},
   {
 		name: 'Uncommon Raw Materials',
@@ -222,6 +249,7 @@ export const Goods = [
 		pdm: {Ag: 2, Wa: 1},
 		sdm: {In: 2, Ht: 1},
 		availability: ['Ag', 'De', 'Wa'],
+		techSensitive: false,
 	},
   {
 		name: 'Wood',
@@ -230,6 +258,7 @@ export const Goods = [
 		pdm: {Ag: 6},
 		sdm: {Ri: 2, In: 1},
 		availability: ['Ag', 'Ga'],
+		techSensitive: false,
 	},
   {
 		name: 'Vehicles',
@@ -238,11 +267,12 @@ export const Goods = [
 		pdm: {In:2, Ht: 1},
 		sdm: {Ni: 2, Hi: 1},
 		availability: ['In', 'Ht'],
+		techSensitive: true,
 	},
 ];
 
 export const getAvailableGoods = (tradeCodes) => {
-	const goods = Goods.filter(g => {
+	return Goods.filter(g => {
 		if (g.availability.length === 0)
 			return true;
 
@@ -251,7 +281,6 @@ export const getAvailableGoods = (tradeCodes) => {
 				return true;
 		return false;
 	});
-	return goods;
 }
 
 export const purchaseDM = (good, tradeCodes) => {
