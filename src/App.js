@@ -431,7 +431,7 @@ function App() {
                 const tons = Math.min(maxTons(g, lotSize, sourcePop), cargo);
                 const effectiveBroker = brokerHired ? 4 : broker;
                 let basePrice = g.price;
-                if (basePriceRule === '75%')
+                if (basePriceRule === '75%' && basePrice > 50000)
                   basePrice = Math.round(basePrice * .75);
                 let avgPurchase = averagePurchasePrice(basePrice, pDM, effectiveBroker, brokerRule, brokerMultiplier, basePriceRule);
                 if (brokerHired)
