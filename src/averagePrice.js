@@ -29,66 +29,66 @@ const THREE_DICE_ODDS = [
 const DEFAULT_SUPPLIER_BROKER = 2;
 const DEFAULT_PURCHASER_BROKER = 2;
 
-export const averagePurchasePrice = (price, dm, broker, brokerRule, brokerMultiplier) => {
+export const averagePurchasePrice = (price, dm, broker, brokerRule, brokerMultiplier, step) => {
   let ap = 0;
   if (brokerRule === 'effect') {
     for (let e = 2; e <= 12; e++) {
       const effect = e + broker - 8;
       const half_effect = Math.ceil(effect / 2);
       for (let r = 3; r <= 18; r++)
-        ap += price * purchasePriceModifier(r + dm + effect - DEFAULT_SUPPLIER_BROKER) * THREE_DICE_ODDS[r] * DICE_ODDS[e];
+        ap += price * purchasePriceModifier(r + dm + effect - DEFAULT_SUPPLIER_BROKER, step) * THREE_DICE_ODDS[r] * DICE_ODDS[e];
     }
   } else if (brokerRule === 'halfeffect') {
       for (let e=2; e<=12; e++ ) {
         const effect = Math.ceil((e + broker - 8)/2);
         for (let r=3; r<=18; r++)
-          ap += price*purchasePriceModifier(r+dm+effect-DEFAULT_SUPPLIER_BROKER)*THREE_DICE_ODDS[r]*DICE_ODDS[e];
+          ap += price*purchasePriceModifier(r+dm+effect-DEFAULT_SUPPLIER_BROKER, step)*THREE_DICE_ODDS[r]*DICE_ODDS[e];
       }
   } else if (brokerRule === 'effect%') {
     for (let e=2; e<=12; e++ ) {
       const emult = 1 - (e + broker - 8) * brokerMultiplier / 100;
       for (let r=3; r<=18; r++)
-        ap += price*purchasePriceModifier(r+dm)*THREE_DICE_ODDS[r]*emult*DICE_ODDS[e];
+        ap += price*purchasePriceModifier(r+dm, step)*THREE_DICE_ODDS[r]*emult*DICE_ODDS[e];
     }
   } else
     for (let r=3; r<=18; r++)
       if (brokerRule === 'percent')
-        ap += price*purchasePriceModifier(r+dm)*THREE_DICE_ODDS[r]*(1-(broker*brokerMultiplier)/100);
+        ap += price * purchasePriceModifier(r + dm, step) * THREE_DICE_ODDS[r] * (1 - (broker * brokerMultiplier) / 100);
       else
-        ap += price*purchasePriceModifier(r+dm+broker-DEFAULT_SUPPLIER_BROKER)*THREE_DICE_ODDS[r];
+        ap += price * purchasePriceModifier(r + dm + broker - DEFAULT_SUPPLIER_BROKER, step) * THREE_DICE_ODDS[r];
   return Math.round(ap);
 };
 
-export const averageSalePrice = (price, dm, broker, brokerRule, brokerMultiplier) => {
+export const averageSalePrice = (price, dm, broker, brokerRule, brokerMultiplier, step) => {
   let ap = 0;
   if (brokerRule === 'effect') {
     for (let e = 2; e <= 12; e++) {
       const effect = e + broker - 8;
       for (let r = 3; r <= 18; r++)
-        ap += price * salePriceModifier(r + dm + effect - DEFAULT_PURCHASER_BROKER) * THREE_DICE_ODDS[r] * DICE_ODDS[e];
+        ap += price * salePriceModifier(r + dm + effect - DEFAULT_PURCHASER_BROKER, step) * THREE_DICE_ODDS[r] * DICE_ODDS[e];
     }
   } else if (brokerRule === 'halfeffect') {
     for (let e=2; e<=12; e++ ) {
       const effect = Math.ceil((e + broker - 8)/2);
       for (let r=3; r<=18; r++)
-        ap += price*salePriceModifier(r+dm+effect-DEFAULT_PURCHASER_BROKER)*THREE_DICE_ODDS[r]*DICE_ODDS[e];
+        ap += price*salePriceModifier(r+dm+effect-DEFAULT_PURCHASER_BROKER, step)*THREE_DICE_ODDS[r]*DICE_ODDS[e];
     }
   } else if (brokerRule === 'effect%') {
     for (let e=2; e<=12; e++ ) {
       const emult = 1+(e+broker-8)*brokerMultiplier/100;
       for (let r=3; r<=18; r++)
-        ap += price*salePriceModifier(r+dm)*THREE_DICE_ODDS[r]*emult*DICE_ODDS[e];
+        ap += price*salePriceModifier(r+dm, step)*THREE_DICE_ODDS[r]*emult*DICE_ODDS[e];
     }
   } else {
     for (let r=3; r<=18; r++)
       if (brokerRule === 'raw')
-        ap += price * salePriceModifier(r + dm - DEFAULT_PURCHASER_BROKER) * THREE_DICE_ODDS[r];
+        ap += price * salePriceModifier(r + dm - DEFAULT_PURCHASER_BROKER, step) * THREE_DICE_ODDS[r];
       else if (brokerRule === 'bas')
-        ap += price * salePriceModifier(r + broker + dm - DEFAULT_PURCHASER_BROKER) * THREE_DICE_ODDS[r];
+        ap += price * salePriceModifier(r + broker + dm - DEFAULT_PURCHASER_BROKER, step) * THREE_DICE_ODDS[r];
       else if (brokerRule === 'hbas')
-        ap += price * salePriceModifier(r + Math.ceil(broker/2) + dm - DEFAULT_PURCHASER_BROKER) * THREE_DICE_ODDS[r];
+        ap += price * salePriceModifier(r + Math.ceil(broker/2) + dm - DEFAULT_PURCHASER_BROKER, step) * THREE_DICE_ODDS[r];
       else
-        ap += price*salePriceModifier(r+dm)*THREE_DICE_ODDS[r]*(1+(broker*brokerMultiplier)/100);
+        ap += price*salePriceModifier(r+dm, step)*THREE_DICE_ODDS[r]*(1+(broker*brokerMultiplier)/100);
   }
   return Math.round(ap);
 };

@@ -24,3 +24,13 @@ export const BasePriceRuleNotes = {
   '75%': 'Prices for goods over Cr50,000 are reduced by 25%',
 };
 
+export const PurchaseModifierStep = {
+  raw: 'Rules as written',
+  'half': 'Steps on the Price Modifier Table are halved',
+};
+
+export const SaleModifierStep = {
+  raw: 'Rules as written',
+  'half': 'Steps on the Price Modifier Table are halved',
+};
+

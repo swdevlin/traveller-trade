@@ -4,7 +4,14 @@ import {useEffect, useState} from "react";
 import {getAvailableGoods, Goods, maxTons, purchaseDM, saleDM} from "./goods";
 import {averagePurchasePrice, averageSalePrice} from "./averagePrice";
 import TradeCodeSelector from "./components/tradeCodeSelector";
-import {BasePriceRuleNotes, BrokerModifierNotes, BrokerRuleNotes, LotSizeNotes} from "./notes";
+import {
+  BasePriceRuleNotes,
+  BrokerModifierNotes,
+  BrokerRuleNotes,
+  LotSizeNotes,
+  PurchaseModifierStep,
+  SaleModifierStep
+} from "./notes";
 import {StartportCodes} from "./starports";
 import TechLevel from "./components/techLevel";
 
@@ -86,6 +93,20 @@ function App() {
   useEffect(() => {
     localStorage.setItem('basePriceRule', basePriceRule);
   }, [basePriceRule]);
+
+  const [purchaseModifierStep, setPurchaseModifierStep] = useState(() =>
+    localStorage.getItem('purchaseModifierStep') ? localStorage.getItem('purchaseModifierStep') : 'raw'
+  );
+  useEffect(() => {
+    localStorage.setItem('purchaseModifierStep', purchaseModifierStep);
+  }, [purchaseModifierStep]);
+
+  const [saleModifierStep, setSaleModifierStep] = useState(() =>
+    localStorage.getItem('saleModifierStep') ? localStorage.getItem('saleModifierStep') : 'raw'
+  );
+  useEffect(() => {
+    localStorage.setItem('saleModifierStep', saleModifierStep);
+  }, [saleModifierStep]);
 
   const expensesPerTon = () => {
     if (cargo === 0)
@@ -401,7 +422,20 @@ function App() {
                     </Input>
                   </th>
                   <th>Purchase DM</th>
-                  <th>Expected Cost</th>
+                  <th>
+                    Expected Cost<sup>11</sup>
+                    <Input
+                      id="purchaseModifierStep"
+                      name="purchaseModifierStep"
+                      type="select"
+                      size={'sm'}
+                      value={purchaseModifierStep}
+                      onChange={(e)=> {setPurchaseModifierStep(e.target.value)}}
+                    >
+                      <option value="raw">RAW</option>
+                      <option value="half">Half step</option>
+                     </Input>
+                  </th>
                   <th>
                     Tons<sup>1</sup><br/>
                     <Input
@@ -420,7 +454,20 @@ function App() {
                   </th>
                   <th className="br">Savings</th>
                   <th>Sale DM</th>
-                  <th className="br">Sale Price</th>
+                  <th className="br">
+                    Sale Price<sup>10</sup>
+                    <Input
+                      id="saleModifierStep"
+                      name="saleModifierStep"
+                      type="select"
+                      size={'sm'}
+                      value={saleModifierStep}
+                      onChange={(e)=> {setSaleModifierStep(e.target.value)}}
+                    >
+                      <option value="raw">RAW</option>
+                      <option value="half">Half step</option>
+                    </Input>
+                  </th>
                   <th colSpan={2}>Profit<sup>9</sup></th>
                 </tr>
               </thead>
@@ -433,10 +480,10 @@ function App() {
                 let basePrice = g.price;
                 if (basePriceRule === '75%' && basePrice > 50000)
                   basePrice = Math.round(basePrice * .75);
-                let avgPurchase = averagePurchasePrice(basePrice, pDM, effectiveBroker, brokerRule, brokerMultiplier, basePriceRule);
+                let avgPurchase = averagePurchasePrice(basePrice, pDM, effectiveBroker, brokerRule, brokerMultiplier, purchaseModifierStep);
                 if (brokerHired)
                   avgPurchase = Math.round(avgPurchase /= 0.9);
-                let avgSale = averageSalePrice(basePrice, sDM, broker, brokerRule, brokerMultiplier);
+                let avgSale = averageSalePrice(basePrice, sDM, broker, brokerRule, brokerMultiplier, saleModifierStep);
                 if (techAffectsSale && g.techSensitive)
                   avgSale = Math.round(avgSale * (1+tlMultiplier*(sourceTL - destinationTL)/100))
                 const savings = Math.round((basePrice - avgPurchase)*tons);
@@ -500,6 +547,12 @@ function App() {
             </Row>
             <Row className='note'>
               <Col><sup>9</sup>The first column is sale - purchase. The second column factors in expense per ton</Col>
+            </Row>
+            <Row className='note'>
+              <Col><sup>10</sup>{SaleModifierStep[saleModifierStep]}</Col>
+            </Row>
+            <Row className='note'>
+              <Col><sup>11</sup>{PurchaseModifierStep[purchaseModifierStep]}</Col>
             </Row>
           </Col>
         </Row>
