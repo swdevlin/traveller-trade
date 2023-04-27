@@ -27,10 +27,12 @@ export const BasePriceRuleNotes = {
 export const PurchaseModifierStep = {
   raw: 'Rules as written',
   'half': 'Steps on the Price Modifier Table are halved',
+  '1%': 'Steps on the Price Modifier Table are in 1% increments',
 };
 
 export const SaleModifierStep = {
   raw: 'Rules as written',
   'half': 'Steps on the Price Modifier Table are halved',
+  '1%': 'Steps on the Price Modifier Table are in 1% increments',
 };
 
