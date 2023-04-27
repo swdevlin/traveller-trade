@@ -2,7 +2,7 @@ import './App.css';
 import {Col, Container, FormGroup, Input, Label, Row, Table} from "reactstrap";
 import {useEffect, useState} from "react";
 import {getAvailableGoods, Goods, maxTons, purchaseDM, saleDM} from "./goods";
-import {averagePurchasePrice, averageSalePrice} from "./averagePrice";
+import {averagePurchasePrice, averageSalePrice, bestPurchasePrice, bestSalePrice} from "./averagePrice";
 import TradeCodeSelector from "./components/tradeCodeSelector";
 import {
   BasePriceRuleNotes,
@@ -434,6 +434,7 @@ function App() {
                     >
                       <option value="raw">RAW</option>
                       <option value="half">Half step</option>
+                      <option value="1%">1%</option>
                      </Input>
                   </th>
                   <th>
@@ -466,9 +467,10 @@ function App() {
                     >
                       <option value="raw">RAW</option>
                       <option value="half">Half step</option>
+                      <option value="1%">1%</option>
                     </Input>
                   </th>
-                  <th colSpan={2}>Profit<sup>9</sup></th>
+                  <th colSpan={3}>Profit<sup>9</sup></th>
                 </tr>
               </thead>
               {availableGoods.map(g => {
@@ -481,14 +483,21 @@ function App() {
                 if (basePriceRule === '75%' && basePrice > 50000)
                   basePrice = Math.round(basePrice * .75);
                 let avgPurchase = averagePurchasePrice(basePrice, pDM, effectiveBroker, brokerRule, brokerMultiplier, purchaseModifierStep);
-                if (brokerHired)
+                let bestPurchase = bestPurchasePrice(basePrice, pDM, effectiveBroker, brokerRule, brokerMultiplier, purchaseModifierStep);
+                if (brokerHired) {
                   avgPurchase = Math.round(avgPurchase /= 0.9);
+                  bestPurchase = Math.round(bestPurchase /= 0.9);
+                }
                 let avgSale = averageSalePrice(basePrice, sDM, broker, brokerRule, brokerMultiplier, saleModifierStep);
-                if (techAffectsSale && g.techSensitive)
-                  avgSale = Math.round(avgSale * (1+tlMultiplier*(sourceTL - destinationTL)/100))
+                let bestSale = bestSalePrice(basePrice, sDM, broker, brokerRule, brokerMultiplier, saleModifierStep);
+                if (techAffectsSale && g.techSensitive) {
+                  avgSale = Math.round(avgSale * (1 + tlMultiplier * (sourceTL - destinationTL) / 100))
+                  bestSale = Math.round(bestSale * (1 + tlMultiplier * (sourceTL - destinationTL) / 100))
+                }
                 const savings = Math.round((basePrice - avgPurchase)*tons);
                 const profit = Math.round((avgSale - avgPurchase)*tons);
                 const expProfit = Math.round((avgSale - avgPurchase - exp)*tons);
+                const bestProfit = Math.round((bestSale - bestPurchase)*tons);
                 return (
                   <tr>
                     <td>{g.name}</td>
@@ -504,6 +513,9 @@ function App() {
                     </td>
                     <td className={`number ${expProfit < 0 ? 'loss' : ''}`}>
                       {expProfit.toLocaleString()}
+                    </td>
+                    <td className={`number ${bestProfit < 0 ? 'loss' : ''}`}>
+                      {bestProfit.toLocaleString()}
                     </td>
                   </tr>
                 );
@@ -546,7 +558,7 @@ function App() {
               <Col><sup>8</sup>{BasePriceRuleNotes[basePriceRule]}</Col>
             </Row>
             <Row className='note'>
-              <Col><sup>9</sup>The first column is sale - purchase. The second column factors in expense per ton</Col>
+              <Col><sup>9</sup>The first column is sale - purchase. The second column factors in expense per ton. The third column is best possible revenue.</Col>
             </Row>
             <Row className='note'>
               <Col><sup>10</sup>{SaleModifierStep[saleModifierStep]}</Col>

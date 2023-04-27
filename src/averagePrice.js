@@ -59,6 +59,32 @@ export const averagePurchasePrice = (price, dm, broker, brokerRule, brokerMultip
   return Math.round(ap);
 };
 
+export const bestPurchasePrice = (price, dm, broker, brokerRule, brokerMultiplier, step) => {
+  let ap = 0;
+  if (brokerRule === 'effect') {
+    for (let e = 2; e <= 12; e++) {
+      const effect = e + broker - 8;
+      const half_effect = Math.ceil(effect / 2);
+      ap += price * purchasePriceModifier(18 + dm + effect - DEFAULT_SUPPLIER_BROKER, step) * DICE_ODDS[e];
+    }
+  } else if (brokerRule === 'halfeffect') {
+      for (let e=2; e<=12; e++ ) {
+        const effect = Math.ceil((e + broker - 8)/2);
+        ap += price*purchasePriceModifier(18 + dm+effect-DEFAULT_SUPPLIER_BROKER, step) * DICE_ODDS[e];
+      }
+  } else if (brokerRule === 'effect%') {
+    for (let e=2; e<=12; e++ ) {
+      const emult = 1 - (e + broker - 8) * brokerMultiplier / 100;
+      ap += price*purchasePriceModifier(18 + dm, step) * emult * DICE_ODDS[e];
+    }
+  } else
+    if (brokerRule === 'percent')
+      ap += price * purchasePriceModifier(18 + dm, step) * (1 - (broker * brokerMultiplier) / 100);
+    else
+      ap += price * purchasePriceModifier(18 + dm + broker - DEFAULT_SUPPLIER_BROKER, step);
+  return Math.round(ap);
+};
+
 export const averageSalePrice = (price, dm, broker, brokerRule, brokerMultiplier, step) => {
   let ap = 0;
   if (brokerRule === 'effect') {
@@ -89,6 +115,36 @@ export const averageSalePrice = (price, dm, broker, brokerRule, brokerMultiplier
         ap += price * salePriceModifier(r + Math.ceil(broker/2) + dm - DEFAULT_PURCHASER_BROKER, step) * THREE_DICE_ODDS[r];
       else
         ap += price*salePriceModifier(r+dm, step)*THREE_DICE_ODDS[r]*(1+(broker*brokerMultiplier)/100);
+  }
+  return Math.round(ap);
+};
+
+export const bestSalePrice = (price, dm, broker, brokerRule, brokerMultiplier, step) => {
+  let ap = 0;
+  if (brokerRule === 'effect') {
+    for (let e = 2; e <= 12; e++) {
+      const effect = e + broker - 8;
+      ap += price * salePriceModifier(18 + dm + effect - DEFAULT_PURCHASER_BROKER, step) * DICE_ODDS[e];
+    }
+  } else if (brokerRule === 'halfeffect') {
+    for (let e=2; e<=12; e++ ) {
+      const effect = Math.ceil((e + broker - 8)/2);
+      ap += price*salePriceModifier(18 + dm+effect-DEFAULT_PURCHASER_BROKER, step)*DICE_ODDS[e];
+    }
+  } else if (brokerRule === 'effect%') {
+    for (let e=2; e<=12; e++ ) {
+      const emult = 1+(e+broker-8)*brokerMultiplier/100;
+      ap += price*salePriceModifier(18 + dm, step)*emult*DICE_ODDS[e];
+    }
+  } else {
+    if (brokerRule === 'raw')
+      ap += price * salePriceModifier(18 + dm - DEFAULT_PURCHASER_BROKER, step);
+    else if (brokerRule === 'bas')
+      ap += price * salePriceModifier(18 + broker + dm - DEFAULT_PURCHASER_BROKER, step);
+    else if (brokerRule === 'hbas')
+      ap += price * salePriceModifier(18 + Math.ceil(broker/2) + dm - DEFAULT_PURCHASER_BROKER, step);
+    else
+      ap += price*salePriceModifier( 18 + dm, step)*(1+(broker*brokerMultiplier)/100);
   }
   return Math.round(ap);
 };
